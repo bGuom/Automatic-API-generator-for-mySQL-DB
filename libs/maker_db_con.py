@@ -12,6 +12,7 @@ def makedbcon(apidir,dbname,dbhost,dbuser,dbpw):
     file.write("\t"+"// connect to database"+ "\n")
     file.write("\t"+"$dbcon = mysqli_connect(\""+ dbhost +"\", \""+ dbuser+"\", \""+ dbpw +"\", \""+dbname + "\" );"+"\n")
     file.write("?>")
+    file.close()
     
         
     

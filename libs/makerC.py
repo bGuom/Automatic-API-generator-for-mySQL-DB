@@ -24,7 +24,7 @@
 import os
 import documenter
 
-def makeC(apidir,tablename,columns):
+def makeC(apidir,tablename,columns,primary):
     
     if not os.path.exists('apis/'+apidir+'/'+'add_to_'+tablename):
         os.makedirs('apis/'+apidir+'/'+'add_to_'+tablename)
@@ -53,6 +53,7 @@ def makeC(apidir,tablename,columns):
     file.write("\t"+"}"+ "\n")
     file.write("\t"+"if (count($errors) > 0) {echo json_encode($errors);} "+  "\n")
     file.write("?>")
+    file.close()
 
     documenter.document(apidir,'add_to_'+tablename,columns,'c')
 

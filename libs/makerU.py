@@ -27,12 +27,23 @@
 import os
 import documenter
 
-def makeU(apidir,tablename,columns):
+def makeU(apidir,tablename,columns,primary):
     
     if not os.path.exists('apis/'+apidir+'/'+'update_'+tablename):
         os.makedirs('apis/'+apidir+'/'+'update_'+tablename)
 
-    var_arr=[]        
+    tailstring=''
+    temp_arr=[]
+    var_arr=[]
+    if (len(primary)==1):
+        tailstring = primary[0] + " = $" + primary[0].lower()
+    elif (len(primary) > 0):
+        for key in primary:
+            temp_arr.append(key + " = $" + key.lower())
+        tailstring= (" AND ".join(temp_arr))
+    else:
+        tailstring = columns[0]+" = $" + columns[0].lower()
+        
     file= open('apis/'+apidir+'/'+'update_'+tablename+"/"+"index.php","w+")
 
     file.write("<?php" + "\n")
@@ -48,7 +59,7 @@ def makeU(apidir,tablename,columns):
         file.write("\t"+"if (empty($"+column.lower()+")) { array_push($errors, \""+column.lower()+" required\"); }"+ "\n")
     file.write("\t"+"// If there is no errors update"+ "\n")
     file.write("\t"+"if (count($errors) == 0) {"+ "\n")
-    file.write("\t\t"+"$query = \"UPDATE "+tablename + " SET "+(",".join(var_arr))+ " WHERE " + columns[0] + " = $" + columns[0].lower()+"\";"+ "\n")
+    file.write("\t\t"+"$query = \"UPDATE "+tablename + " SET "+(",".join(var_arr))+ " WHERE " + tailstring +"\";"+ "\n")
     file.write("\t\t"+"mysqli_query($dbcon, $query);"+ "\n")
     file.write("\t\t"+"$msg = array();"+ "\n")
     file.write("\t\t"+"array_push($msg, \"result:success\");"+ "\n")
@@ -56,6 +67,7 @@ def makeU(apidir,tablename,columns):
     file.write("\t"+"}"+ "\n")
     file.write("\t"+"if (count($errors) > 0) {echo json_encode($errors);} "+  "\n")
     file.write("?>")
+    file.close()
 
     documenter.document(apidir,'update_'+tablename,columns,'u')
 

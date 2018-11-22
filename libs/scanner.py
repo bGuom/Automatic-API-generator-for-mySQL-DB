@@ -3,6 +3,7 @@ import MySQLdb
 def scan(dbname,dbhost,dbuser,dbpw):
     tables =[]
     tablecolumns =[]
+    tableprimary=[]
     
     try:
         connection = MySQLdb.connect(
@@ -21,14 +22,16 @@ def scan(dbname,dbhost,dbuser,dbpw):
 
         for table in tables:
             cursor.execute("SHOW columns FROM "+table)
-            
             tablecolumns.append([column[0] for column in cursor.fetchall()])
+            q = "SELECT COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_NAME = \'" + table + "\' AND CONSTRAINT_NAME = 'PRIMARY'"
+            cursor.execute(q)
+            tableprimary.append([column[0] for column in cursor.fetchall()])
 
-        return tables,tablecolumns
+        return tables,tablecolumns,tableprimary
         
     except:
         print "Error occured when connecting to db.."
         raw_input('Please try again')
         exit()
 
-##print scan('db_store','localhost','root','')[1]
+#print scan('db_store','localhost','root','')[1]

@@ -5,6 +5,7 @@ import makerC
 import makerU
 import makerR
 import makerD
+import documenter
 
 print '============================================================'
 print '                     API-GENERATOR'
@@ -15,7 +16,7 @@ print '============================================================\n\n\n'
 
         
 while (True):
-    apidir = raw_input("Enter name for output folder\n");
+    apidir = raw_input("Enter name for output folder\n").lower();
 
     if not os.path.exists('apis/'+apidir):
         os.makedirs('apis/'+apidir)
@@ -39,6 +40,7 @@ if (con=='Y' or con=='y'):
     con_res = scanner.scan(dbname,dbhost,dbuser,dbpw) 
     tables = con_res[0]
     tablecolumns = con_res[1]
+    tableprimary = con_res[2]
 
     maker_db_con.makedbcon(apidir,dbname,dbhost,dbuser,dbpw)
 
@@ -46,19 +48,20 @@ if (con=='Y' or con=='y'):
     tot = len(tables)*4
     val=1
     for i in range(len(tables)):
-        makerC.makeC(apidir,tables[i],tablecolumns[i])
+        makerC.makeC(apidir,tables[i],tablecolumns[i],tableprimary[i])
         print "Generating..\t"+ str((float(val)/float(tot))*100) + "%"
         val+=1
-        makerU.makeU(apidir,tables[i],tablecolumns[i])
+        makerU.makeU(apidir,tables[i],tablecolumns[i],tableprimary[i])
         print "Generating..\t"+ str((float(val)/float(tot))*100) + "%"
         val+=1
-        makerR.makeR(apidir,tables[i],tablecolumns[i])
+        makerR.makeR(apidir,tables[i],tablecolumns[i],tableprimary[i])
         print "Generating..\t"+ str((float(val)/float(tot))*100) + "%"
         val+=1
-        makerD.makeD(apidir,tables[i],tablecolumns[i])
+        makerD.makeD(apidir,tables[i],tablecolumns[i],tableprimary[i])
         print "Generating..\t"+ str((float(val)/float(tot))*100) + "%"
         val+=1
-        
+
+    documenter.enddocument(apidir)
     print"============================================================"
     print "Completed 100%"
     print"============================================================"

@@ -16,7 +16,7 @@
 import os
 import documenter
 
-def makeR(apidir,tablename,columns):
+def makeR(apidir,tablename,columns,primary):
     
     if not os.path.exists('apis/'+apidir+'/'+'get_'+tablename):
         os.makedirs('apis/'+apidir+'/'+'get_'+tablename)
@@ -35,6 +35,7 @@ def makeR(apidir,tablename,columns):
     file.write("\t"+"}"+ "\n")
     file.write("\t"+"echo json_encode($json_array);"+  "\n")
     file.write("?>")
+    file.close()
 
     documenter.document(apidir,'get_'+tablename,columns,'r')
 
